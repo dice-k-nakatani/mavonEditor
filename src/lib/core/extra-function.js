@@ -161,17 +161,23 @@ export const insertTab = ($vm) => {
         var endPos = obj.selectionEnd;
         var tmpStr = obj.value;
         let lastLine = tmpStr.substring(0, startPos).split('\n').pop()
-        if (lastLine.match(/^\s*[0-9]+\.\s[+-]\S*/)) {
+        if (lastLine.match(/^\s*[0-9]+\.\s[*+-]\S*/)) {
             // 有序列表
             let temp = lastLine.replace(/(\d+)/, 1)
             obj.value = tmpStr.substring(0, startPos - temp.length) + '    ' +  temp + tmpStr.substring(endPos, tmpStr.length);
-        } else if (lastLine.match(/^\s*[+-]\s+\S*/)) {
+            obj.selectionStart = obj.selectionEnd = startPos + 4;
+        } else if (lastLine.match(/^\s*[*+-]\s+\S*/)) {
             // 无序列表
             obj.value = tmpStr.substring(0, startPos - lastLine.length) + '    ' +  lastLine + tmpStr.substring(endPos, tmpStr.length);
+            obj.selectionStart = obj.selectionEnd = startPos + 4;
+        } else if (lastLine.match(/^$/)) {
+            // 无序列表
+            obj.value = tmpStr.substring(0, startPos - lastLine.length) + '    ' +  lastLine + tmpStr.substring(endPos, tmpStr.length);
+            obj.selectionStart = obj.selectionEnd = startPos + 4;
         } else {
-            // obj.value = tmpStr.substring(0, startPos) + '\t' + tmpStr.substring(endPos, tmpStr.length);
+            // obj.value = tmpStr.substring(0, startPos) + '    ' + tmpStr.substring(endPos, tmpStr.length);
         }
-        obj.selectionStart = obj.selectionEnd = startPos + 4;
+
     } else {
         alert('Error: Browser version is too low')
         // obj.value += str;
@@ -212,12 +218,12 @@ export const insertEnter = ($vm, event) => {
         var tmpStr = obj.value;
         // 获取光标前最后一行字符串
         let lastLine = tmpStr.substring(0, startPos).split('\n').pop()
-        let matchListNeedChangeLine = lastLine.match(/^\s*(?:[0-9]+\.|-)\s+\S+/)
+        let matchListNeedChangeLine = lastLine.match(/^\s*(?:[0-9]+\.|[*+-])\s+\S+/)
         if (matchListNeedChangeLine) {
             // 需要自动产生下一个列表项
             event.preventDefault()
             // eg: [1.  test] 仅获取[1. ]
-            let subfix = matchListNeedChangeLine.shift().match(/^\s*(?:[0-9]+\.|-)\s/).shift()
+            let subfix = matchListNeedChangeLine.shift().match(/^\s*(?:[0-9]+\.|[*+-])\s/).shift()
             if (subfix.search(/-/) >= 0) {
                 // 无序列表
                 obj.value = tmpStr.substring(0, startPos) + '\n' + subfix + tmpStr.substring(endPos, tmpStr.length);
@@ -229,7 +235,7 @@ export const insertEnter = ($vm, event) => {
                 obj.selectionStart = obj.selectionEnd = startPos + temp.length + 1
             }
         } else {
-            let matchListNeedRemoveLine = lastLine.match(/^\s*(?:[0-9]+\.|-)\s+$/)
+            let matchListNeedRemoveLine = lastLine.match(/^\s*(?:[0-9]+\.|[*+-])\s+$/)
             if (matchListNeedRemoveLine) {
                 // 需要跳出列表
                 event.preventDefault()

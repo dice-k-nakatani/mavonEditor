@@ -135,9 +135,9 @@ export const toolbar_left_click = (_type, $vm) => {
              str: $vm.d_words.tl_subscript
          },
          'quote': {
-             prefix: '> ',
-             subfix: '',
-             str: $vm.d_words.tl_quote
+             prefix: '`',
+             subfix: '`',
+             str: '',
          },
          'link': {
              prefix: '[](',
@@ -150,8 +150,8 @@ export const toolbar_left_click = (_type, $vm) => {
              str: $vm.d_words.tl_image
          },
          'code': {
-             prefix: '```',
-             subfix: '\n\n```\n',
+             prefix: '```\n',
+             subfix: '\n```\n',
              str: ''
          },
          'table': {
@@ -173,7 +173,7 @@ export const toolbar_left_click = (_type, $vm) => {
            prefix: '::: hljs-left\n\n',
            subfix: '\n\n:::\n',
            str: $vm.d_words.tl_alignleft
-         }
+         },
      };
      if (_param_of_insert_text.hasOwnProperty(_type)) {
          // 插入对应的内容
@@ -187,7 +187,9 @@ export const toolbar_left_click = (_type, $vm) => {
          'save': $toolbar_left_save_click,
          'ol': $toolbar_left_ol_click,
          'ul': $toolbar_left_ul_click,
-         'removeLine': $toolbar_left_remove_line_click
+         'removeLine': $toolbar_left_remove_line_click,
+         'indent': function () { $vm.insertTab(); },
+         'outdent': function () { $vm.unInsertTab(); },
      };
      if (_other_left_click.hasOwnProperty(_type)) {
          _other_left_click[_type]($vm);
