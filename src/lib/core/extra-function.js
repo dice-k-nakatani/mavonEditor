@@ -161,17 +161,17 @@ export const insertTab = ($vm) => {
         var endPos = obj.selectionEnd;
         var tmpStr = obj.value;
         let lastLine = tmpStr.substring(0, startPos).split('\n').pop()
-        if (lastLine.match(/^\s*[0-9]+\.\s+\S*/)) {
+        if (lastLine.match(/^\s*[0-9]+\.\s[+-]\S*/)) {
             // 有序列表
             let temp = lastLine.replace(/(\d+)/, 1)
-            obj.value = tmpStr.substring(0, startPos - temp.length) + '\t' +  temp + tmpStr.substring(endPos, tmpStr.length);
-        } else if (lastLine.match(/^\s*-\s+\S*/)) {
+            obj.value = tmpStr.substring(0, startPos - temp.length) + '    ' +  temp + tmpStr.substring(endPos, tmpStr.length);
+        } else if (lastLine.match(/^\s*[+-]\s+\S*/)) {
             // 无序列表
-            obj.value = tmpStr.substring(0, startPos - lastLine.length) + '\t' +  lastLine + tmpStr.substring(endPos, tmpStr.length);
+            obj.value = tmpStr.substring(0, startPos - lastLine.length) + '    ' +  lastLine + tmpStr.substring(endPos, tmpStr.length);
         } else {
-            obj.value = tmpStr.substring(0, startPos) + '\t' + tmpStr.substring(endPos, tmpStr.length);
+            // obj.value = tmpStr.substring(0, startPos) + '\t' + tmpStr.substring(endPos, tmpStr.length);
         }
-        obj.selectionStart = obj.selectionEnd = startPos + 1;
+        obj.selectionStart = obj.selectionEnd = startPos + 4;
     } else {
         alert('Error: Browser version is too low')
         // obj.value += str;
@@ -188,10 +188,12 @@ export const unInsertTab = ($vm) => {
         var endPos = obj.selectionEnd;
         var tmpStr = obj.value;
         let lastLine = tmpStr.substring(0, startPos).split('\n').pop()
-        if (lastLine.search(/\t/) >= 0) {
+        if (lastLine.search(/ /) >= 0) {
             // 替换最后一个制表符为空
-            obj.value = tmpStr.substring(0, startPos - lastLine.length) +  lastLine.replace(/(.*)\t/, '$1') + tmpStr.substring(endPos, tmpStr.length);
-            obj.selectionStart = obj.selectionEnd = startPos - 1;
+            var lastLineNew = lastLine.replace(/^( *?) {1,4}/, '$1');
+            var removedWidth = lastLine.length - lastLineNew.length;
+            obj.value = tmpStr.substring(0, startPos - lastLine.length) +  lastLineNew + tmpStr.substring(endPos, tmpStr.length);
+            obj.selectionStart = obj.selectionEnd = startPos - removedWidth;
         }
     } else {
         alert('Error: Browser version is too low')

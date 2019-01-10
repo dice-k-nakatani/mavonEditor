@@ -77,6 +77,21 @@ export const keydownListen = ($vm) => {
             }
             }
         } else if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey) {
+            // control +
+            switch (e.keyCode) {
+                case KEY_CODE.Z: {
+                    // Z
+                    e.preventDefault()
+                    $vm.toolbar_left_click('undo')
+                    break;
+                }
+                case KEY_CODE.Y: {
+                    // Y
+                    e.preventDefault()
+                    $vm.toolbar_left_click('redo')
+                    break;
+                }
+            }
         } else if ((e.ctrlKey || e.metaKey) && e.altKey && !e.shiftKey) {
         } else if (!(e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey) {
             // shift +
