@@ -281,6 +281,26 @@ export default {
             // 初始化Textarea编辑开关
             this.editableTextarea();
         })
+
+        // tidy up vomit.
+        if ($vm.value) {
+          var new_val = $vm.value.split(/\n/).map(x=>{
+            var m = x.match(/^( +)[*+-] /);
+            if (m) {
+              var indent_width = m[1].length;
+              var indent_width_canonical = Math.floor(indent_width / 4) * 4;
+              if (indent_width != indent_width_canonical) {
+                var new_line = x.replace(/^( +)/, ' '.repeat(indent_width_canonical));
+                console.log(new_line);
+                return new_line;
+              }
+            }
+            return x;
+          }).join('\n');
+          console.log(`fuc: ${$vm.value.length} => ${new_val.length}`);
+          $vm.$emit('input', new_val);
+          // vm.val = new_val;
+        }
     },
     mounted() {
         var $vm = this;
