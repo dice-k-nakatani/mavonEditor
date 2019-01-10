@@ -1,5 +1,5 @@
 <template>
-    <div :class="[{'fullscreen': s_fullScreen}]" class="v-note-wrapper markdown-body">
+    <div :class="[{'fullscreen': s_fullScreen}]" class="v-note-wrapper markdown-body" style='height: auto;'>
         <!--工具栏-->
         <div class="v-note-op" v-show="toolbarsFlag" :class="{'shadow': boxShadow}">
             <v-md-toolbar-left ref="toolbar_left" :editable="editable" :d_words="d_words"
@@ -28,14 +28,19 @@
                     <!-- 双栏 -->
                     <v-autoTextarea ref="vNoteTextarea" :placeholder="placeholder ? placeholder : d_words.start_editor"
                                     class="content-input" :fontSize="fontSize"
-                                    lineHeight="1.5" v-model="d_value" fullHeight></v-autoTextarea>
+                                    lineHeight="1.5" v-model="d_value"
+                                    fullHeight
+                    >
+                    </v-autoTextarea>
                 </div>
             </div>
             <!--展示区-->
             <div :class="{'single-show': (!s_subfield && s_preview_switch) || (!s_subfield && s_html_code)}"
                  v-show="s_preview_switch || s_html_code" class="v-note-show">
                 <div ref="vShowContent" v-html="d_render" v-show="!s_html_code"
-                     :class="{'scroll-style': s_scrollStyle}" class="v-show-content">
+                     :class="{'scroll-style': s_scrollStyle}" class="v-show-content"
+                     
+                >
                 </div>
                 <div v-show="s_html_code" :class="{'scroll-style': s_scrollStyle}" class="v-show-content-html">
                     {{d_render}}
@@ -281,26 +286,6 @@ export default {
             // 初始化Textarea编辑开关
             this.editableTextarea();
         })
-
-        // tidy up vomit.
-        if ($vm.value) {
-          var new_val = $vm.value.split(/\n/).map(x=>{
-            var m = x.match(/^( +)[*+-] /);
-            if (m) {
-              var indent_width = m[1].length;
-              var indent_width_canonical = Math.floor(indent_width / 4) * 4;
-              if (indent_width != indent_width_canonical) {
-                var new_line = x.replace(/^( +)/, ' '.repeat(indent_width_canonical));
-                console.log(new_line);
-                return new_line;
-              }
-            }
-            return x;
-          }).join('\n');
-          console.log(`fuc: ${$vm.value.length} => ${new_val.length}`);
-          $vm.$emit('input', new_val);
-          // vm.val = new_val;
-        }
     },
     mounted() {
         var $vm = this;
@@ -322,6 +307,7 @@ export default {
         // fullscreen事件
         fullscreenchange(this);
         this.d_value = this.value;
+
         // 将help添加到末尾
         document.body.appendChild(this.$refs.help);
         $vm.loadExternalLink('markdown_css', 'css');
